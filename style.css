@@ -212,19 +212,33 @@ body {
 
 @media (max-width: 480px) {
     .todo_wrapper {
-        height: auto; 
+        width: 90%;
+        max-width: 320px;
+        margin-left: 34px;
+        margin-right: 34px;
+        height: auto;
+        padding: 15px;
+    }
+
+    #todo_list li {
+        padding-left: 10px;   /* 좌측 패딩 줄임 */
+        padding-right: 10px;
+    }
+    #todo_list li span,
+    #todo_input,
+    #add_btn,
+    #save_btn {
+        font-size: 16px;  /* 원래 대비 90% */
     }
 
     .input_area {
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
     }
 
-    #add_btn, #save_btn, #todo_input {
-        width: 100%; 
+    .history_card {
+        min-width: 280px;   /* 모바일 화면에 맞춤 */
+        height: auto;
     }
 
-    #todo_list {
-        padding-left: 20px; 
-    }
 }
