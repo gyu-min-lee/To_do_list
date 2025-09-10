@@ -1,0 +1,209 @@
+span {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+span::after {
+    content: "";
+    position: absolute;
+    left: 0;                  
+    top: 50%;                 
+    width: 0;                 
+    height: 2px;              
+    background: rgb(28, 46, 46); 
+    transition: width 0.3s ease;    
+}
+span.completed {
+    color: darkslategray;
+    transition: color 0.3s ease;
+}
+span.completed::after {
+    width: 100%;
+    background: rgb(28, 46, 46);
+}
+#todo_list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 10px;
+    padding-left: 20px;
+    position: relative;
+    list-style: none;
+}
+#todo_list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: black;
+    font-size: 20px;
+}
+#todo_list li span {
+    font-size: 18px;
+}
+.del_btn {
+    font-size: 15px;
+    background: none;
+    border: none;
+    padding: 5px;
+    font-weight: bold;
+    margin-left: 10px;
+    cursor: pointer;
+}
+.del_btn:hover {
+    color: darkslategrey;
+}
+body {
+    background-color: antiquewhite;
+}
+.todo_wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    height: 70vh;
+    margin: 50px auto;
+    margin-top: 100px;
+    background-color: white;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    
+}
+.title {
+    font-size: 36px;
+    font-weight: 700;
+    text-align: left;
+    margin: 0px;
+    padding: 20px;
+    background-color: rgb(255, 245, 233);
+}
+#todo_list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    padding-left: 40px;
+}
+.input_area {
+    display: flex;
+    gap: 5px;
+    padding: 15px;
+    padding-left: 25px;
+    padding-right: 35px;
+    text-align: center;
+    margin-top: auto;
+}
+#todo_input {
+    flex: 1;
+    padding: 5px 15px;
+    border-radius: 12px;
+    outline: none;
+    border: none;
+    background-color: rgb(255, 245, 233);
+    font-size: 18px;
+}
+#add_btn {
+    padding: 10px 15px;
+    border-radius: 12px;
+    background-color: rgb(233, 221, 206);
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;  
+}
+#add_btn:hover {
+    background-color: rgb(212, 201, 187);
+}
+#save_btn {
+    padding: 5px 10px;
+    margin-left: 4px;
+    border-radius: 12px;
+    background-color: rgb(216, 190, 163);
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;  
+}
+#save_btn:hover {
+    background-color: rgb(193, 170, 146);
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: rgb(255, 245, 233);
+}
+#show_history {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    margin-right: 8px;
+}
+#show_history img {
+    width: 32px;
+    height: 32px;
+}
+
+#history_overlay {
+    display: none;
+    position: fixed;       
+    top: 0;           
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.4);
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    z-index: 1000;      
+}
+
+#history_container {
+    display: flex;
+    gap: 10px;
+    cursor: grab;
+    overflow-x: auto hidden;
+    overflow-y: hidden;
+    height: 90%;
+    align-items: flex-start;
+    padding: 10px;
+}
+.history_card {
+    position: relative;
+    flex-shrink: 0;
+    min-width: 360px;
+    height: 63vh;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    margin-top: 82px;
+}
+.history_title {
+    font-size: 24px;
+    font-weight: 700;
+    text-align: left;
+    margin: 0;
+    padding: 25px;
+    background-color: rgb(255, 245, 233);
+}
+
+.history_list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 40px;
+}
+#close_history {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+.card_close_btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+}

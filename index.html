@@ -1,0 +1,30 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>To Do List (Gyum in ver)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="todo_wrapper">
+        <div class="header">
+            <h1 class="title"></h1>
+            <button id="show_history">
+                <img src="img/clock-26095_1920.png" alt="history">
+            </button>
+        </div>
+        <ul id="todo_list"></ul>
+        <div class="input_area">
+            <input type="text" placeholder="Enter to do" id="todo_input">
+            <button id="add_btn">add</button>
+            <button id="save_btn">save</button>
+        </div>
+    </div>
+    <div id="history_overlay">
+        <button id="close_history">X</button>
+        <div id="history_container"></div>
+    </div>
+<script src="script.js"></script>
+</body>
+</html>
