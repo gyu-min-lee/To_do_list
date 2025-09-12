@@ -210,13 +210,11 @@ body {
 
 
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
     .todo_wrapper {
         width: 90%;
         max-width: 320px;
-        margin-left: 34px;
-        margin-right: 34px;
-        height: auto;
+        height: 70vh;
         padding: 15px;
     }
 
