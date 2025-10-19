@@ -160,7 +160,7 @@ body {
     display: flex;
     gap: 10px;
     cursor: grab;
-    overflow-x: auto hidden;
+    overflow-x: auto;
     overflow-y: hidden;
     height: 90%;
     align-items: flex-start;
@@ -176,6 +176,7 @@ body {
     display: flex;
     flex-direction: column;
     margin-top: 82px;
+    overflow-y: auto;
 }
 .history_title {
     font-size: 24px;
@@ -236,7 +237,9 @@ body {
 
     .history_card {
         min-width: 280px;   /* 모바일 화면에 맞춤 */
-        height: auto;
+        height: 63vh;
+        max-height: 63vh;
+        overflow-y: auto;
     }
 
 }

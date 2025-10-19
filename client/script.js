@@ -2,7 +2,7 @@ const input = document.querySelector("#todo_input");
 const addBtn = document.querySelector("#add_btn");
 const list = document.querySelector("#todo_list");
 let todos = [];
-//날짜 표시
+// 날짜 표시
 const today = new Date();
 const year = today.getFullYear();
 const shortyear = year % 100;
@@ -12,13 +12,35 @@ const formattedDate = `${shortyear}/${month}/${day}`;
 const Title = document.querySelector(".title")
 Title.textContent = formattedDate;
 
-list.addEventListener("click", function(e) {
+const BASE_URL =
+    window.location.hostname === "localhost"
+    ? "http://localhost:3000"
+    : "https://todo-gyum.vercel.app";
+
+const loadTodosFromServer = async () => {
+    const res = await fetch(`${BASE_URL}/todos`);
+    const serverTodos = await res.json();
+
+    todos = serverTodos.map(todo => ({
+        id: todo.id,
+        text: todo.title,
+        completed: todo.completed
+    }));
+    renderTodos();
+};
+
+loadTodosFromServer();
+
+list.addEventListener("click", async function(e) {
     const li = e.target.closest("li");
     if(!li) return;
-
     const index = li.dataset.index;
 
     if (e.target.classList.contains("del_btn")) {
+        const todo = todos[index];
+        await fetch(`${BASE_URL}/todos/${todo.id}`, {
+            method: 'DELETE'
+        });
         todos.splice(index, 1);
         renderTodos();
     }
@@ -26,9 +48,14 @@ list.addEventListener("click", function(e) {
     if (e.target.tagName === "SPAN") {
         todos[index].completed = !todos[index].completed;   
         e.target.classList.toggle("completed");
-    }
 
-    localStorage.setItem("todos", JSON.stringify(todos));
+        const todo = todos[index];
+        await fetch(`${BASE_URL}/todos/${todo.id}`, {
+            method: 'PUT',
+            headers: { 'Content-type': 'application/json' },
+            body: JSON.stringify({ title: todo.text, completed: todo.completed ? 1 : 0})
+        });
+    }
 });
 
 function renderTodos() {
@@ -52,32 +79,21 @@ function renderTodos() {
     });    
 }
 
-function addTodo() {
+async function addTodo() {
     const text = input.value;
     if(!text) return;
 
-    const li = document.createElement("li");
-    li.dataset.index = todos.length;
-    const span = document.createElement("span");
-    span.textContent = text;
+    const res = await fetch(`${BASE_URL}/todos`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: text })   
+    });
 
-    const todo = { text: text, completed: false };
-    todos.push(todo);
-    localStorage.setItem("todos", JSON.stringify(todos));    
-
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "X";
-    delBtn.classList.add("del_btn");
-
-    li.appendChild(span);
-    li.appendChild(delBtn);
-    list.appendChild(li);
-
+    const newTodo = await res.json();
+    todos.push({ text: newTodo.title, completed: newTodo.completed, id: newTodo.id });
+    renderTodos();
     input.value = "";
 }
-
-let saved = localStorage.getItem("todos");
-todos = saved ? JSON.parse(saved) : [];
 
 addBtn.addEventListener("click", addTodo);
 
@@ -86,25 +102,31 @@ input.addEventListener("keydown", function(e) {
 });
 
 
-let history = JSON.parse(localStorage.getItem("history")) || [];
 const showHistoryBtn = document.querySelector("#show_history");
 const saveBtn = document.querySelector("#save_btn");
 const historyContainer= document.querySelector("#history_container");
 const historyOverlay = document.querySelector("#history_overlay");
 const closeBtn = document.getElementById('close_history');
 // save snapshot
-saveBtn.addEventListener("click", () => {
-    renderTodos();
+saveBtn.addEventListener("click", async () => {
     const snapshot = {
         title: Title.textContent,
         todos: todos.map(todo => ({...todo}))
     };
-    history.push(snapshot);
-    localStorage.setItem("history", JSON.stringify(history));
-    alert("Snapshot saved!")
+
+    const res = await fetch(`${BASE_URL}/snapshots`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(snapshot)
+    });
+    const savedSnapshot = await res.json();
+    alert(`Snapshot saved!`);
 });
 // show history overlay
-showHistoryBtn.addEventListener("click", () => {
+showHistoryBtn.addEventListener("click", async () => {
+    const res = await fetch(`${BASE_URL}/snapshots`);
+    const history = await res.json();
+
     historyContainer.innerHTML = "";
 
     history.forEach((snapshot, index) => {
@@ -114,9 +136,8 @@ showHistoryBtn.addEventListener("click", () => {
         const closeCardBtn = document.createElement("button");
         closeCardBtn.textContent = "✕";
         closeCardBtn.classList.add("card_close_btn");
-        closeCardBtn.addEventListener("click", () => {
-            history.splice(index, 1);
-            localStorage.setItem("history", JSON.stringify(history));
+        closeCardBtn.addEventListener("click", async () => {
+            await fetch(`${BASE_URL}/snapshots/${snapshot.id}`, { method: 'DELETE' })
             card.remove();
         });
         card.appendChild(closeCardBtn);
@@ -129,7 +150,7 @@ showHistoryBtn.addEventListener("click", () => {
         const ul = document.createElement("ul");
         ul.classList.add("history_list");
 
-        (snapshot.todos || []).forEach(todo => {
+        (JSON.parse(snapshot.todos) || []).forEach(todo => {
             const li = document.createElement("li");     
             const span = document.createElement("span");
             span.textContent = todo.text;
@@ -137,11 +158,9 @@ showHistoryBtn.addEventListener("click", () => {
             li.appendChild(span);
             ul.appendChild(li);
         });
-
         card.appendChild(ul);
-        historyContainer.appendChild(card);
+        historyContainer.prepend(card);
     });
-    
     historyOverlay.style.display = "flex";
 });
 
@@ -167,6 +186,3 @@ historyContainer.addEventListener("mousemove", e => {
     const walk = (x - startX) * 2;
     historyContainer.scrollLeft = scrollLeft - walk;
 });
-
-// 초기 렌더
-renderTodos();
